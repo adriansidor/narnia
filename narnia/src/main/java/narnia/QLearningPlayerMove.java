@@ -15,28 +15,36 @@ public class QLearningPlayerMove implements BallMoveDriver {
     private static final int STEP_UNIT = 10;
 
     private GameNetwork gameNetwork = GameNetwork.getInstance();
+    private float beforeMove;
+    private MoveType lastMove = MoveType.DO_NOT_MOVE;
+    private MoveType actualMove = MoveType.DO_NOT_MOVE;
+    private double[] actualQOut = new double[GameNetwork.OUTPUT_NEURON_NUMBER];
+    private double[] actualQIn = new double[GameNetwork.INPUT_NEURON_NUMBER];
+
 
 
     public void move(Ball ball, ContainerBox box, BallPosition[] positionVector) {
 
 
-        Random random = new Random();
-        int randomInt = random.nextInt();
-
-
-        MoveType moveType = null;
-        if (randomInt % 7 == 0) {
-            moveType = moveByNetwork(ball, positionVector);
-        } else {
-            moveType = getRandomMove(ball);
-        }
+//        Random random = new Random();
+//        int randomInt = random.nextInt();
+//
+//        this.actualQOut = gameNetwork.getOutput();
+//        this.actualQIn = getInputByBallAndPositionVector(lastMove,ball,positionVector);
+//
+//        if (randomInt % 7 == 0) {
+//            this.actualMove = moveByNetwork(ball, positionVector);
+//        } else {
+//            this.actualMove = getRandomMove(ball);
+//        }
+//
+//        cheeckBounds(ball,box);
+//
+//        int actualReward = getRaward(ball.copy(), positionVector);
+//
+//        predictMoves(ball.copy(), positionVector.clone(), actualReward, this.actualMove);
 
         cheeckBounds(ball,box);
-
-        int actualReward = getRaward(ball.copy(), positionVector);
-
-        predictMoves(ball.copy(), positionVector.clone(), actualReward, moveType);
-
 
     }
 
@@ -135,6 +143,7 @@ public class QLearningPlayerMove implements BallMoveDriver {
 
     private void makeMove(Ball ball, MoveType moveType) {
         assert moveType != null;
+        this.beforeMove = ball.y;
         switch (moveType) {
             case UP:
                 ball.y += STEP_UNIT;
@@ -145,6 +154,7 @@ public class QLearningPlayerMove implements BallMoveDriver {
                 ball.y -= STEP_UNIT;
                 break;
         }
+        this.lastMove = moveType;
     }
 
 
@@ -154,6 +164,6 @@ public class QLearningPlayerMove implements BallMoveDriver {
                 return -10;
             }
         }
-        return 0;
+        return 1;
     }
 }

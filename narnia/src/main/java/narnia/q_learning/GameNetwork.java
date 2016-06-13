@@ -33,6 +33,10 @@ public class GameNetwork {
         this.neuralNetwork.learn(dataSet);
     }
 
+    public double[] getOutput(){
+        return neuralNetwork.getOutput();
+    }
+
     public double[] predict(double[] table){
         neuralNetwork.setInput(table);
         neuralNetwork.calculate();
