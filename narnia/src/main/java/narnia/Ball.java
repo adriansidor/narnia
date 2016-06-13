@@ -83,6 +83,16 @@ public class Ball {
 	   return false;
    }
    
+   public boolean detectCollision(BallPosition ballPosition) {
+	   double dx = Math.pow((this.x - ballPosition.getX()), 2);
+	   double dy = Math.pow((this.y - ballPosition.getY()), 2);
+	   double distance = Math.sqrt(dx + dy);
+	   if(distance <= (this.radius+ballPosition.getRadius())) {
+		   return true;
+	   }
+	   return false;
+   }
+   
    /** Return the magnitude of speed. */
    public float getSpeed() {
       return (float)Math.sqrt(speedX * speedX + speedY * speedY);
