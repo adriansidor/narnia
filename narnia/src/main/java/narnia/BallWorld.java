@@ -14,6 +14,7 @@ public class BallWorld extends JPanel {
    
    //private Ball ball;         // A single bouncing Ball's instance
    private int numberOfGames;
+   private int n = 6;
    private LinkedList<Ball> balls = new LinkedList<Ball>();
    private Ball player;
    private ContainerBox box;  // The container rectangular box
@@ -34,11 +35,6 @@ public class BallWorld extends JPanel {
       canvasWidth = width;
       canvasHeight = height;
       this.numberOfGames = numberOfGames;
-      
-      // Init the ball at a random location (inside the box) and moveAngle
-      
-      //Ball ball = new Ball(width, y, radius, speed, 120, Color.BLUE, new IceFloeMoveDriver());
-      //balls.add(ball);
       
       // Init the Container Box to fill the screen
       box = new ContainerBox(0, 0, canvasWidth, canvasHeight, Color.BLACK, Color.WHITE);
@@ -184,8 +180,8 @@ public class BallWorld extends JPanel {
     * Update the game objects, with proper collision detection and response.
     */
    public void gameUpdate() {
-	   int n = 6;
 	  addBall(balls, n, 40, 10);
+	  System.out.println(balls.size());
       moveBalls(balls);
       BallPosition[] positionVector = positionVector(balls, n);
       System.out.println("Ball position");
@@ -197,6 +193,12 @@ public class BallWorld extends JPanel {
     	  collision = true;
       }
       removeBall(balls);
+   }
+   
+   public void drawLines(Graphics g) {
+	   for(int i = 1; i<n; i++) {
+		   g.drawLine(i*box.maxX/n, 0, i*box.maxX/n, box.maxY);
+	   }
    }
    
    /** The custom drawing panel for the bouncing ball (inner class). */
@@ -212,7 +214,9 @@ public class BallWorld extends JPanel {
          }
          
          player.draw(g);
+         drawLines(g);
       }
+      
   
       /** Called back to get the preferred size of the component. */
       @Override
