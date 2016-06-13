@@ -11,6 +11,7 @@ import java.util.Formatter;
  */
 @NoArgsConstructor
 public class Ball {
+    @Getter
     float x, y;           // Ball's center x and y (package access)
     float speedX, speedY;// Ball's speed per step in x and y (package access)
     @Getter
