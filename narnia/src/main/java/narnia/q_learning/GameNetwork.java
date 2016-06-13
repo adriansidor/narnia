@@ -10,7 +10,7 @@ import org.neuroph.util.TransferFunctionType;
  */
 public class GameNetwork {
     private static final int HIDEN_NEURON_NUMBER = 150;
-    private static final int INPUT_NEURON_NUMBER = 10;
+    public static final int INPUT_NEURON_NUMBER = 16;
     public static final int OUTPUT_NEURON_NUMBER = 3;
     private NeuralNetwork neuralNetwork = new NeuralNetwork();
 
@@ -33,14 +33,14 @@ public class GameNetwork {
         this.neuralNetwork.learn(dataSet);
     }
 
-    public double[] preduct(double[] table){
+    public double[] predict(double[] table){
         neuralNetwork.setInput(table);
         neuralNetwork.calculate();
         return neuralNetwork.getOutput();
     }
 
-    public MoveType getMove(){
-        double [] out = neuralNetwork.getOutput();
+    public MoveType getMove(double[] table){
+        double [] out = predict(table);
         MoveType max = MoveType.UP;
         if(out[1]>out[0]){
             max = MoveType.DO_NOT_MOVE;

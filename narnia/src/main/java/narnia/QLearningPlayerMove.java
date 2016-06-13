@@ -2,6 +2,8 @@ package narnia;
 
 import narnia.q_learning.GameNetwork;
 import narnia.q_learning.MoveType;
+import org.neuroph.core.data.DataSet;
+import org.neuroph.core.data.DataSetRow;
 
 import java.util.Random;
 
@@ -16,21 +18,34 @@ public class QLearningPlayerMove implements BallMoveDriver {
 
 
     public void move(Ball ball, ContainerBox box, BallPosition[] positionVector) {
-        float ballMinX = box.getMinX() + ball.getRadius();
-        float ballMinY = box.getMinY() + ball.getRadius();
-        float ballMaxX = box.getMaxX() - ball.getRadius();
-        float ballMaxY = box.getMaxY() - ball.getRadius();
+
 
         Random random = new Random();
         int randomInt = random.nextInt();
 
 
-        if(randomInt%7==0){
-            moveByNetwork(ball);
-        }else {
-            getRandomMove(ball);
+        MoveType moveType = null;
+        if (randomInt % 7 == 0) {
+            moveType = moveByNetwork(ball, positionVector);
+        } else {
+            moveType = getRandomMove(ball);
         }
-        // and speed.
+
+        cheeckBounds(ball,box);
+
+        int actualReward = getRaward(ball.copy(), positionVector);
+
+        predictMoves(ball.copy(), positionVector.clone(), actualReward, moveType);
+
+
+    }
+
+    private void cheeckBounds(Ball ball, ContainerBox box) {
+        float ballMinX = box.getMinX() + ball.getRadius();
+        float ballMinY = box.getMinY() + ball.getRadius();
+        float ballMaxX = box.getMaxX() - ball.getRadius();
+        float ballMaxY = box.getMaxY() - ball.getRadius();
+
         if (ball.x < ballMinX) {
             ball.speedX = -ball.speedX; // Reflect along normal
             ball.x = ballMinX; // Re-position the ball at the edge
@@ -46,30 +61,62 @@ public class QLearningPlayerMove implements BallMoveDriver {
             ball.speedY = -ball.speedY;
             ball.y = ballMaxY;
         }
-
-        int actualReward = getRaward(ball.copy(),positionVector);
-
-        predictMoves(ball.copy(),positionVector.clone(),actualReward);
-
-
-
     }
 
-    private MoveType moveByNetwork(Ball ball) {
-        MoveType moveType = gameNetwork.getMove();
-        makeMove(ball,moveType);
+    private MoveType moveByNetwork(Ball ball, BallPosition[] positionVector) {
+        double[] networkInput = getInputByBallAndPositionVector(MoveType.DO_NOT_MOVE, ball, positionVector);
+        MoveType moveType = gameNetwork.getMove(networkInput);
+        makeMove(ball, moveType);
         return moveType;
     }
 
-    private void predictMoves(Ball copy, BallPosition[] clone, int actualReward) {
+    private double[] getInputByBallAndPositionVector(MoveType moveType, Ball ball, BallPosition[] positionVector) {
+        double[] result = new double[GameNetwork.INPUT_NEURON_NUMBER];
+        switch (moveType) {
+            case UP:
+                result[0] = 1;
+                break;
+            case DO_NOT_MOVE:
+                result[1] = 1;
+                break;
+            case DOWN:
+                result[2] = 1;
+                break;
+        }
+        result[3] = ball.x;
+        result[4] = ball.y;
+        result[5] = ball.getSpeed();
+        int i = 6;
+        int j = 0;
+        while (i < GameNetwork.INPUT_NEURON_NUMBER) {
+            BallPosition ballPosition = positionVector[j++];
+            if (ballPosition != null) {
+                result[i++] = ballPosition.getX();
+                result[i++] = ballPosition.getY();
+            } else {
+                result[i++] = 0;
+                result[i++] = 0;
+            }
+        }
+        return result;
+    }
+
+    private DataSet createDataSet(double[] input, double[] out) {
+        DataSet dataSet = new DataSet(GameNetwork.INPUT_NEURON_NUMBER);
+        dataSet.addRow(new DataSetRow(input, out));
+        return dataSet;
+    }
+
+    private void predictMoves(Ball copy, BallPosition[] clone, int actualReward, MoveType moveType) {
+        assert moveType != null;
 
     }
 
-    private void getRandomMove(Ball ball) {
+    private MoveType getRandomMove(Ball ball) {
         Random random = new Random();
         int randInt = random.nextInt(3);
         MoveType moveType = null;
-        switch (randInt){
+        switch (randInt) {
             case 0:
                 moveType = MoveType.UP;
                 break;
@@ -83,18 +130,19 @@ public class QLearningPlayerMove implements BallMoveDriver {
 
         makeMove(ball, moveType);
 
+        return moveType;
     }
 
     private void makeMove(Ball ball, MoveType moveType) {
-        assert moveType!=null;
-        switch (moveType){
+        assert moveType != null;
+        switch (moveType) {
             case UP:
-                ball.y+=STEP_UNIT;
+                ball.y += STEP_UNIT;
                 break;
             case DO_NOT_MOVE:
                 break;
             case DOWN:
-                ball.y-=STEP_UNIT;
+                ball.y -= STEP_UNIT;
                 break;
         }
     }
