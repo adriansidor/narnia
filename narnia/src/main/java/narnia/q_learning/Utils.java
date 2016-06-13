@@ -61,4 +61,21 @@ public class Utils {
         }
         return moveType;
     }
+
+    public static double maxQ(GameState gameState,int reval) {
+        if(reval==-10){
+            return 0 ;
+        }
+        double a = getInputByBallAndPositionVector(MoveType.UP,gameState)[0];
+        double b = getInputByBallAndPositionVector(MoveType.UP,gameState)[1];
+        double c = getInputByBallAndPositionVector(MoveType.UP,gameState)[2];
+
+        double max = a;
+        if(b>a){
+            max = b;
+        }else if (c>b){
+            max = c;
+        }
+        return max;
+    }
 }
