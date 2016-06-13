@@ -70,7 +70,7 @@ public class BallWorld extends JPanel {
 		int speed = 10;
 		int angleInDegree = rand.nextInt(360);
 		player = new Ball(radius - 100, radius, radius, speed, angleInDegree,
-				Color.RED, new QLearningPlayerMove());
+				Color.RED, new NewQLearning());
 		balls = new LinkedList<Ball>();
 		collision = false;
 	}
