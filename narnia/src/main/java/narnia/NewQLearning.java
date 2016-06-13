@@ -12,32 +12,67 @@ import java.util.Random;
  */
 public class NewQLearning implements BallMoveDriver {
 
+    private static final int STEP_UNIT = 10;
     private GameState lastState;
     private double[] lastOut = new double[GameNetwork.OUTPUT_NEURON_NUMBER];
     private double[] lastIn = new double[GameNetwork.INPUT_NEURON_NUMBER];
+    private MoveType curentMove = MoveType.DO_NOT_MOVE;
     private MoveType lastMove = MoveType.DO_NOT_MOVE;
 
+
     private GameNetwork gameNetwork = GameNetwork.getInstance();
+
+    private float beforeMove;
+    private static int rewart = 0;
 
     public void move(Ball ball, ContainerBox box, BallPosition[] positionVector) {
         lastState = new GameState(ball, positionVector);
         lastOut = gameNetwork.getOutput();
-        lastIn = Utils.getInputByBallAndPositionVector(lastMove, lastState);
+        lastIn = Utils.getInputByBallAndPositionVector(curentMove, lastState);
 
 //        get a player move
         Random random = new Random();
         int randx = random.nextInt();
 
         if (randx % 5 == 0) {
-            lastMove = getMoveByNetwork();
+            curentMove = getMoveByNetwork();
         }else {
-            lastMove = Utils.getRandomMove();
+            curentMove = Utils.getRandomMove();
         }
 
+        Ball newBallPosition = moveBall(ball.copy(), curentMove);
+
+        rewart += getReward(new GameState(newBallPosition,positionVector.clone()));
 
 
         cheeckBounds(ball, box);
 
+    }
+
+    private int getReward(GameState gameState) {
+        for (BallPosition ballPosition : gameState.getBallPositions()) {
+            if (gameState.getPlayer().detectCollision(ballPosition)) {
+                return -10;
+            }
+        }
+        return 1;
+    }
+
+    private Ball moveBall(Ball ball, MoveType moveType) {
+        assert moveType != null;
+        this.beforeMove = ball.y;
+        switch (moveType) {
+            case UP:
+                ball.y += STEP_UNIT;
+                break;
+            case DO_NOT_MOVE:
+                break;
+            case DOWN:
+                ball.y -= STEP_UNIT;
+                break;
+        }
+        this.lastMove = moveType;
+        return ball;
     }
 
 
@@ -65,7 +100,7 @@ public class NewQLearning implements BallMoveDriver {
     }
 
     public MoveType getMoveByNetwork() {
-        double[] input = Utils.getInputByBallAndPositionVector(lastMove,lastState);
+        double[] input = Utils.getInputByBallAndPositionVector(curentMove,lastState);
         return gameNetwork.getMove(input);
     }
 
