@@ -44,8 +44,8 @@ public class Ball {
     * 
     * @param box: the container (obstacle) for this ball. 
     */
-   public void moveOneStepWithCollisionDetection(ContainerBox box) {
-	   driver.move(this, box);
+   public void moveOneStepWithCollisionDetection(ContainerBox box, BallPosition[] positionVector) {
+	   driver.move(this, box, positionVector);
       // Get the ball's bounds, offset by the radius of the ball
       /*float ballMinX = box.minX + radius;
       float ballMinY = box.minY + radius;

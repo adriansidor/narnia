@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class PlayerRandomMoveDriver implements BallMoveDriver {
 
-	public void move(Ball ball, ContainerBox box) {
+	public void move(Ball ball, ContainerBox box, BallPosition[] positionVector) {
 		float ballMinX = box.minX + ball.radius;
 		float ballMinY = box.minY + ball.radius;
 		float ballMaxX = box.maxX - ball.radius;

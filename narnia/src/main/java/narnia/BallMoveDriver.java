@@ -2,5 +2,5 @@ package narnia;
 
 public interface BallMoveDriver {
 
-	public void move(Ball ball, ContainerBox box);
+	public void move(Ball ball, ContainerBox box, BallPosition[] positionVector);
 }
