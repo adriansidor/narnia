@@ -30,6 +30,8 @@ public class NewQLearning implements BallMoveDriver {
 
     private final static double GAMMA = 0.9;
 
+    public static int iter = 0;
+
     public void move(Ball ball, ContainerBox box, BallPosition[] positionVector) {
         lastState = new GameState(ball, positionVector);
         lastOut = gameNetwork.getOutput();
@@ -38,7 +40,9 @@ public class NewQLearning implements BallMoveDriver {
         Random random = new Random();
         int randx = random.nextInt();
 
-        if (randx % 5 == 0) {
+        iter++;
+
+        if (randx % 5 == 0 || iter>100000) {
             curentMove = getMoveByNetwork();
         }else {
             curentMove = Utils.getRandomMove();

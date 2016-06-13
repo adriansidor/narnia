@@ -5,10 +5,17 @@ import org.neuroph.core.data.DataSet;
 import org.neuroph.nnet.MultiLayerPerceptron;
 import org.neuroph.util.TransferFunctionType;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 /**
  * Created by Radosław on 13.06.2016.
  */
 public class GameNetwork {
+
+    private static final boolean READ_NETWORK_FROM_FILE = false;
+
     private static final int HIDEN_NEURON_NUMBER = 150;
     public static final int INPUT_NEURON_NUMBER = 16;
     public static final int OUTPUT_NEURON_NUMBER = 3;
@@ -17,9 +24,17 @@ public class GameNetwork {
     private static GameNetwork gameNetwork;
 
     private GameNetwork(){
-        this.neuralNetwork = new MultiLayerPerceptron(TransferFunctionType.SIGMOID,
-                INPUT_NEURON_NUMBER,HIDEN_NEURON_NUMBER,OUTPUT_NEURON_NUMBER);
-        this.neuralNetwork.randomizeWeights();
+        if(READ_NETWORK_FROM_FILE){
+            try {
+                neuralNetwork = NeuralNetwork.load(new FileInputStream("perceptron.nnet"));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }else {
+            this.neuralNetwork = new MultiLayerPerceptron(TransferFunctionType.SIGMOID,
+                    INPUT_NEURON_NUMBER, HIDEN_NEURON_NUMBER, OUTPUT_NEURON_NUMBER);
+            this.neuralNetwork.randomizeWeights();
+        }
     }
 
     public static GameNetwork getInstance() {
@@ -54,4 +69,7 @@ public class GameNetwork {
         return max;
     }
 
+    public void doSave() {
+        neuralNetwork.save("perceptron.nnet");
+    }
 }
