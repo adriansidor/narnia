@@ -1,4 +1,6 @@
 package narnia;
+import lombok.Getter;
+
 import java.awt.*;
 import java.util.Formatter;
 /**
@@ -6,7 +8,8 @@ import java.util.Formatter;
  */
 public class Ball {
    float x, y;           // Ball's center x and y (package access)
-   float speedX, speedY; // Ball's speed per step in x and y (package access)
+   float speedX, speedY;// Ball's speed per step in x and y (package access)
+   @Getter
    float radius;         // Ball's radius (package access)
    private Color color;  // Ball's color
    private static final Color DEFAULT_COLOR = Color.BLUE;

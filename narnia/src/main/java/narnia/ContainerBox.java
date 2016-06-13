@@ -1,9 +1,12 @@
 package narnia;
+import lombok.Getter;
+
 import java.awt.*;
 /**
  * A rectangular container box, containing the bouncing ball.  
  */
 public class ContainerBox {
+   @Getter
    int minX, maxX, minY, maxY;  // Box's bounds (package access)
    private Color colorFilled;   // Box's filled color (background)
    private Color colorBorder;   // Box's border color
