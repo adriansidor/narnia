@@ -3,6 +3,8 @@ package narnia;
 import narnia.q_learning.GameNetwork;
 import narnia.q_learning.GameState;
 import narnia.q_learning.MoveType;
+import org.neuroph.core.data.DataSet;
+import org.neuroph.core.data.DataSetRow;
 
 /**
  * Created by Radosław on 14.06.2016.
@@ -46,10 +48,30 @@ public class QLearningPlayer implements BallMoveDriver {
     }
 
     private double[] getNetworkOut(Ball beforeMove, Ball newBallPosition, BallPosition[] positionVector, MoveType curentMove) {
+        double betaT = 0.1;
+        double gamma = 0.15;
+
         double[] networkOut = network.getOutput();
+        double[] networkIn = Utils.getInputByBallAndPositionVector(curentMove,new GameState(beforeMove.copy(),positionVector));
         double toUpdateVal = networkOut[curentMove.getMove()];
         double maxNextStep = getMaxOfNextMove(new GameState(newBallPosition, positionVector));
+
+        toUpdateVal+= betaT*(curentReward+ gamma*(maxNextStep)-toUpdateVal);
+
+        networkOut[curentMove.getMove()] = toUpdateVal;
+
+
+        DataSet dataSet  = getDataSet(networkIn,networkOut);
+
+        network.learn(dataSet);
+
         return null;
+    }
+
+    private DataSet getDataSet(double[] in, double[] out){
+        DataSet dataSet = new DataSet(GameNetwork.INPUT_NEURON_NUMBER);
+        dataSet.addRow(new DataSetRow(in,out));
+        return dataSet;
     }
 
     private double getMaxOfNextMove(GameState gameState) {
