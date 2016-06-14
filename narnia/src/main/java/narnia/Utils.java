@@ -1,7 +1,11 @@
-package narnia.q_learning;
+package narnia;
 
 import narnia.Ball;
 import narnia.BallPosition;
+import narnia.ContainerBox;
+import narnia.q_learning.GameNetwork;
+import narnia.q_learning.GameState;
+import narnia.q_learning.MoveType;
 
 import java.util.Random;
 
@@ -10,6 +14,8 @@ import java.util.Random;
  */
 public class Utils {
 
+
+    private static final float STEP_UNIT = 10;
 
     public static double[] getInputByBallAndPositionVector(MoveType moveType, GameState gameState) {
         double[] result = new double[GameNetwork.INPUT_NEURON_NUMBER];
@@ -77,5 +83,62 @@ public class Utils {
             max = c;
         }
         return max;
+    }
+
+    public static double getMaxQFunction(GameState gameState, int curentReward) {
+        double a = getOutByMoveUP(gameState);
+        return 0;
+    }
+
+    private static double getOutByMoveUP(GameState gameState) {
+        return 0;
+    }
+
+    public static int getReward(GameState gameState) {
+        for (BallPosition ballPosition : gameState.getBallPositions()) {
+            if (gameState.getPlayer().detectCollision(ballPosition)) {
+                return -10;
+            }
+        }
+        return 1;
+    }
+
+    public static Ball moveBall(Ball ball, MoveType moveType) {
+        assert moveType != null;
+
+        switch (moveType) {
+            case UP:
+                ball.y += STEP_UNIT;
+                break;
+            case DO_NOT_MOVE:
+                break;
+            case DOWN:
+                ball.y -= STEP_UNIT;
+                break;
+        }
+        return ball;
+    }
+
+    public static void cheeckBounds(Ball ball, ContainerBox box) {
+        float ballMinX = box.getMinX() + ball.getRadius();
+        float ballMinY = box.getMinY() + ball.getRadius();
+        float ballMaxX = box.getMaxX() - ball.getRadius();
+        float ballMaxY = box.getMaxY() - ball.getRadius();
+
+        if (ball.x < ballMinX) {
+            ball.speedX = -ball.speedX; // Reflect along normal
+            ball.x = ballMinX; // Re-position the ball at the edge
+        } else if (ball.x > ballMaxX) {
+            ball.speedX = -ball.speedX;
+            ball.x = ballMaxX;
+        }
+        // May cross both x and y bounds
+        if (ball.y < ballMinY) {
+            ball.speedY = -ball.speedY;
+            ball.y = ballMinY;
+        } else if (ball.y > ballMaxY) {
+            ball.speedY = -ball.speedY;
+            ball.y = ballMaxY;
+        }
     }
 }

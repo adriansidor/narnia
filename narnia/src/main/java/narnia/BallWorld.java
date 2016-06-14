@@ -1,5 +1,6 @@
 package narnia;
 
+import narnia.q_learning.GameNetwork;
 import narnia.q_learning.TimeStatistic;
 
 import java.awt.*;
@@ -12,7 +13,7 @@ import javax.swing.*;
  * The control logic and main display panel for game.
  */
 public class BallWorld extends JPanel {
-    private static final int UPDATE_RATE = 800;  // Frames per second (fps)
+    private static final int UPDATE_RATE = 30;  // Frames per second (fps)
 
 
     //private Ball ball;         // A single bouncing Ball's instance
@@ -74,7 +75,7 @@ public class BallWorld extends JPanel {
         int speed = 10;
         int angleInDegree = rand.nextInt(360);
         player = new Ball(radius - 100, radius, radius, speed, angleInDegree,
-                Color.RED, new NewQLearning());
+                Color.RED, new QLearningPlayer());
         balls = new LinkedList<Ball>();
         collision = false;
     }
@@ -89,6 +90,8 @@ public class BallWorld extends JPanel {
         final java.util.List<TimeStatistic> timeStatistics = new ArrayList<TimeStatistic>();
         Thread gameThread = new Thread() {
             public void run() {
+
+
                 for (int i = 0; i < numberOfGames; i++) {
                     long begin = System.currentTimeMillis();
                     while (!collision) {
@@ -107,9 +110,12 @@ public class BallWorld extends JPanel {
                     long end = System.currentTimeMillis();
                     reset();
                 }
+
+
             }
         };
         gameThread.start();  // Invoke GaemThread.run()
+        System.out.println(GameNetwork.getInstance().getOutput());
     }
 
     private void moveBalls(LinkedList<Ball> balls) {

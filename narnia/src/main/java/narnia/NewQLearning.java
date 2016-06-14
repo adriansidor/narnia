@@ -3,7 +3,6 @@ package narnia;
 import narnia.q_learning.GameNetwork;
 import narnia.q_learning.GameState;
 import narnia.q_learning.MoveType;
-import narnia.q_learning.Utils;
 import org.neuroph.core.data.DataSet;
 import org.neuroph.core.data.DataSetRow;
 
@@ -50,15 +49,15 @@ public class NewQLearning implements BallMoveDriver {
 
         lastIn = Utils.getInputByBallAndPositionVector(curentMove, lastState);
 
-        Ball newBallPosition = moveBall(ball.copy(), curentMove);
-
-        int curentReval = getReward(new GameState(newBallPosition,positionVector.clone()));
-
-        updateQFunction(new GameState(newBallPosition,positionVector.clone()),curentReval);
-
-//        register new state as actual
-        ball.y = newBallPosition.y;
-        cheeckBounds(ball, box);
+//        Ball newBallPosition = moveBall(ball.copy(), curentMove);
+//
+//        int curentReval = getReward(new GameState(newBallPosition,positionVector.clone()));
+//
+//        updateQFunction(new GameState(newBallPosition,positionVector.clone()),curentReval);
+//
+////        register new state as actual
+//        ball.y = newBallPosition.y;
+//        cheeckBounds(ball, box);
 
     }
 
@@ -87,46 +86,46 @@ public class NewQLearning implements BallMoveDriver {
         return 1;
     }
 
-    private Ball moveBall(Ball ball, MoveType moveType) {
-        assert moveType != null;
-        this.beforeMove = ball.y;
-        switch (moveType) {
-            case UP:
-                ball.y += STEP_UNIT;
-                break;
-            case DO_NOT_MOVE:
-                break;
-            case DOWN:
-                ball.y -= STEP_UNIT;
-                break;
-        }
-        this.lastMove = moveType;
-        return ball;
-    }
+//    private Ball moveBall(Ball ball, MoveType moveType) {
+//        assert moveType != null;
+//        this.beforeMove = ball.y;
+//        switch (moveType) {
+//            case UP:
+//                ball.y += STEP_UNIT;
+//                break;
+//            case DO_NOT_MOVE:
+//                break;
+//            case DOWN:
+//                ball.y -= STEP_UNIT;
+//                break;
+//        }
+//        this.lastMove = moveType;
+//        return ball;
+//    }
 
 
-    private void cheeckBounds(Ball ball, ContainerBox box) {
-        float ballMinX = box.getMinX() + ball.getRadius();
-        float ballMinY = box.getMinY() + ball.getRadius();
-        float ballMaxX = box.getMaxX() - ball.getRadius();
-        float ballMaxY = box.getMaxY() - ball.getRadius();
-
-        if (ball.x < ballMinX) {
-            ball.speedX = -ball.speedX; // Reflect along normal
-            ball.x = ballMinX; // Re-position the ball at the edge
-        } else if (ball.x > ballMaxX) {
-            ball.speedX = -ball.speedX;
-            ball.x = ballMaxX;
-        }
-        // May cross both x and y bounds
-        if (ball.y < ballMinY) {
-            ball.speedY = -ball.speedY;
-            ball.y = ballMinY;
-        } else if (ball.y > ballMaxY) {
-            ball.speedY = -ball.speedY;
-            ball.y = ballMaxY;
-        }
-    }
+//    private void cheeckBounds(Ball ball, ContainerBox box) {
+//        float ballMinX = box.getMinX() + ball.getRadius();
+//        float ballMinY = box.getMinY() + ball.getRadius();
+//        float ballMaxX = box.getMaxX() - ball.getRadius();
+//        float ballMaxY = box.getMaxY() - ball.getRadius();
+//
+//        if (ball.x < ballMinX) {
+//            ball.speedX = -ball.speedX; // Reflect along normal
+//            ball.x = ballMinX; // Re-position the ball at the edge
+//        } else if (ball.x > ballMaxX) {
+//            ball.speedX = -ball.speedX;
+//            ball.x = ballMaxX;
+//        }
+//        // May cross both x and y bounds
+//        if (ball.y < ballMinY) {
+//            ball.speedY = -ball.speedY;
+//            ball.y = ballMinY;
+//        } else if (ball.y > ballMaxY) {
+//            ball.speedY = -ball.speedY;
+//            ball.y = ballMaxY;
+//        }
+//    }
 
     public MoveType getMoveByNetwork() {
         double[] input = Utils.getInputByBallAndPositionVector(curentMove,lastState);

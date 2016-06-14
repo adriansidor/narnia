@@ -42,6 +42,8 @@ public class Ball {
         result.x = new Float(this.x);
         result.y = new Float(this.y);
         result.radius = new Float(this.radius);
+        result.speedX = this.speedX;
+        result.speedY = this.speedY;
         return result;
     }
 
