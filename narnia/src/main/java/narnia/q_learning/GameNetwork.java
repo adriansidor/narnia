@@ -31,9 +31,10 @@ public class GameNetwork {
                 e.printStackTrace();
             }
         }else {
-            this.neuralNetwork = new MultiLayerPerceptron(TransferFunctionType.SIGMOID,
+            this.neuralNetwork = new MultiLayerPerceptron(
                     INPUT_NEURON_NUMBER, HIDEN_NEURON_NUMBER, OUTPUT_NEURON_NUMBER);
             this.neuralNetwork.randomizeWeights();
+
         }
     }
 

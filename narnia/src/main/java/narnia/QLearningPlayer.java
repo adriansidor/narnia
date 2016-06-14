@@ -48,9 +48,10 @@ public class QLearningPlayer implements BallMoveDriver {
     }
 
     private double[] getNetworkOut(Ball beforeMove, Ball newBallPosition, BallPosition[] positionVector, MoveType curentMove) {
-        double betaT = 0.1;
-        double gamma = 0.15;
+        double betaT = 0.05;
+        double gamma = 0.1;
 
+//        curentReward /=11;
         double[] networkOut = network.getOutput();
         double[] networkIn = Utils.getInputByBallAndPositionVector(curentMove,new GameState(beforeMove.copy(),positionVector));
         double toUpdateVal = networkOut[curentMove.getMove()];
