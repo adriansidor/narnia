@@ -3,6 +3,7 @@ package narnia.q_learning;
 import org.neuroph.core.NeuralNetwork;
 import org.neuroph.core.data.DataSet;
 import org.neuroph.nnet.MultiLayerPerceptron;
+import org.neuroph.nnet.learning.BackPropagation;
 import org.neuroph.util.TransferFunctionType;
 
 import java.io.File;
@@ -14,7 +15,7 @@ import java.io.FileNotFoundException;
  */
 public class GameNetwork {
 
-    private static final boolean READ_NETWORK_FROM_FILE = false;
+    private static final boolean READ_NETWORK_FROM_FILE = true;
 
     private static final int HIDEN_NEURON_NUMBER = 150;
     public static final int INPUT_NEURON_NUMBER = 16;
@@ -31,9 +32,10 @@ public class GameNetwork {
                 e.printStackTrace();
             }
         }else {
-            this.neuralNetwork = new MultiLayerPerceptron(
+            this.neuralNetwork = new MultiLayerPerceptron(TransferFunctionType.LINEAR,
                     INPUT_NEURON_NUMBER, HIDEN_NEURON_NUMBER, OUTPUT_NEURON_NUMBER);
             this.neuralNetwork.randomizeWeights();
+            this.neuralNetwork.setLearningRule(new BackPropagation());
 
         }
     }
@@ -61,6 +63,17 @@ public class GameNetwork {
 
     public MoveType getMove(double[] table){
         double [] out = predict(table);
+        MoveType max = MoveType.UP;
+        if(out[1]>out[0]){
+            max = MoveType.DO_NOT_MOVE;
+        }if (out[2]>out[1]){
+            max = MoveType.DOWN;
+        }
+        return max;
+    }
+
+    public MoveType getMove(){
+        double [] out = this.neuralNetwork.getOutput();
         MoveType max = MoveType.UP;
         if(out[1]>out[0]){
             max = MoveType.DO_NOT_MOVE;

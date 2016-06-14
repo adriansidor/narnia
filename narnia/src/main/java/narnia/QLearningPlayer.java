@@ -28,6 +28,7 @@ public class QLearningPlayer implements BallMoveDriver {
             curentMove = Utils.getRandomMove();
         } else {
 //            moves from network
+            curentMove = network.getMove();
         }
 
         Ball newBallPosition = Utils.moveBall(ball.copy(), curentMove);
