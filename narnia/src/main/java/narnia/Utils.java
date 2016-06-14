@@ -77,4 +77,38 @@ public class Utils {
         }
         return 1;
     }
+
+
+
+    public static double[] getInputByBallAndPositionVector(MoveType moveType, GameState gameState) {
+        double[] result = new double[GameNetwork.INPUT_NEURON_NUMBER];
+        switch (moveType) {
+            case UP:
+                result[0] = 1;
+                break;
+            case DO_NOT_MOVE:
+                result[1] = 1;
+                break;
+            case DOWN:
+                result[2] = 1;
+                break;
+        }
+        Ball ball = gameState.getPlayer();
+        result[3] = ball.getX();
+        result[4] = ball.getY();
+        result[5] = ball.getSpeed();
+        int i = 6;
+        int j = 0;
+        while (i < GameNetwork.INPUT_NEURON_NUMBER) {
+            BallPosition ballPosition = gameState.getBallPositions()[j++];
+            if (ballPosition != null) {
+                result[i++] = ballPosition.getX();
+                result[i++] = ballPosition.getY();
+            } else {
+                result[i++] = 0;
+                result[i++] = 0;
+            }
+        }
+        return result;
+    }
 }
