@@ -1,9 +1,12 @@
 package narnia;
+import lombok.NoArgsConstructor;
+
 import java.awt.*;
 import java.util.Formatter;
 /**
  * The bouncing ball.
  */
+@NoArgsConstructor
 public class Ball {
    float x, y;           // Ball's center x and y (package access)
    float speedX, speedY; // Ball's speed per step in x and y (package access)
@@ -32,13 +35,27 @@ public class Ball {
    public Ball(float x, float y, float radius, float speed, float angleInDegree, BallMoveDriver driver) {
       this(x, y, radius, speed, angleInDegree, DEFAULT_COLOR, driver);
    }
+
+
    
    /** Draw itself using the given graphics context. */
    public void draw(Graphics g) {
       g.setColor(color);
       g.fillOval((int)(x - radius), (int)(y - radius), (int)(2 * radius), (int)(2 * radius));
    }
-   
+
+
+
+    public Ball copy(){
+        Ball res = new Ball();
+        res.x = this.x;
+        res.y = this.y;
+        res.speedY = this.speedY;
+        res.speedX = this.speedX;
+        res.radius = this.radius;
+        return res;
+    }
+
    /** 
     * Make one move, check for collision and react accordingly if collision occurs.
     * 
