@@ -14,6 +14,7 @@ import java.util.Random;
  */
 public class Utils {
 
+    static GameNetwork network = GameNetwork.getInstance();
 
     private static final float STEP_UNIT = 10;
 
@@ -87,11 +88,51 @@ public class Utils {
 
     public static double getMaxQFunction(GameState gameState, int curentReward) {
         double a = getOutByMoveUP(gameState);
-        return 0;
+        double b = getOutByMOveDown(gameState);
+        double c = getOutByDontMove(gameState);
+        double max = a;
+        if(b>a){
+            max = b;
+        }else if (c>b){
+            max = c;
+        }
+        return max;
+    }
+
+    private static double getOutByDontMove(GameState gameState) {
+        Ball ball = moveBall(gameState.getPlayer().copy(),MoveType.DOWN);
+        int reward = getReward(new GameState(ball,gameState.getBallPositions()));
+        if(reward==-10){
+            return 0;
+        }else {
+            double[] in = getInputByBallAndPositionVector(MoveType.UP,new GameState(ball,gameState.getBallPositions()));
+            double[] out = network.predict(in);
+            return out[MoveType.DO_NOT_MOVE.getMove()];
+        }
+    }
+
+    private static double getOutByMOveDown(GameState gameState) {
+        Ball ball = moveBall(gameState.getPlayer().copy(),MoveType.DOWN);
+        int reward = getReward(new GameState(ball,gameState.getBallPositions()));
+        if(reward==-10){
+            return 0;
+        }else {
+            double[] in = getInputByBallAndPositionVector(MoveType.UP,new GameState(ball,gameState.getBallPositions()));
+            double[] out = network.predict(in);
+            return out[MoveType.DOWN.getMove()];
+        }
     }
 
     private static double getOutByMoveUP(GameState gameState) {
-        return 0;
+        Ball ball = moveBall(gameState.getPlayer().copy(),MoveType.UP);
+        int reward = getReward(new GameState(ball,gameState.getBallPositions()));
+        if(reward==-10){
+            return 0;
+        }else {
+            double[] in = getInputByBallAndPositionVector(MoveType.UP,new GameState(ball,gameState.getBallPositions()));
+            double[] out = network.predict(in);
+            return out[MoveType.UP.getMove()];
+        }
     }
 
     public static int getReward(GameState gameState) {
