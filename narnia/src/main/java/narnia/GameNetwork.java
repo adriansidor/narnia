@@ -40,6 +40,13 @@ public class GameNetwork {
         neuralNetwork.learn(dataSet);
     }
 
+    public double[] predictByInput(GameState gameState, MoveType moveType){
+        double[] in = Utils.getInputByBallAndPositionVector(moveType,gameState);
+        neuralNetwork.setInput(in);
+        neuralNetwork.calculate();
+        return neuralNetwork.getOutput();
+    }
+
     public MoveType getMoveByState(GameState gameState){
         double[] input = Utils.getInputByBallAndPositionVector(MoveType.NIL,gameState);
         neuralNetwork.setInput(input);
