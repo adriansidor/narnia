@@ -9,9 +9,11 @@ import org.neuroph.core.data.DataSetRow;
  */
 public class QLearningPlayer implements BallMoveDriver {
 
+    private final boolean RANDOM_MOVES = false;
+
+
     private static final double GAMMA = 0.97;
     private static final double BETA_T = 0.1;
-    private final boolean RANDOM_MOVES = true;
 
     private MoveType curentMove;
 
@@ -77,7 +79,7 @@ public class QLearningPlayer implements BallMoveDriver {
     }
 
     private double getMaxByStates(GameState newGameState) {
-//        TODO add reward
+//        TODO add reward if colision  = 0
         double a = network.predictByInput(newGameState, MoveType.UP)[MoveType.UP.getMove()];
         double b = network.predictByInput(newGameState, MoveType.DO_NOT_MOVE)[MoveType.DO_NOT_MOVE.getMove()];
         double c = network.predictByInput(newGameState, MoveType.DOWN)[MoveType.DOWN.getMove()];

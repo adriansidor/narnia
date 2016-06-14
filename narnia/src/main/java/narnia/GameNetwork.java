@@ -6,6 +6,8 @@ import org.neuroph.core.data.DataSet;
 import org.neuroph.nnet.MultiLayerPerceptron;
 import org.neuroph.nnet.learning.BackPropagation;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,11 +20,21 @@ public class GameNetwork {
     public static final int OUTPUT_NEURON_NUMBER = 16;
     private static GameNetwork gameNetwork;
 
+    private static final boolean READ_FROM_FILE = true;
+
     private NeuralNetwork neuralNetwork;
 
     private GameNetwork(){
-        neuralNetwork = new MultiLayerPerceptron(16,150,50,3);
-        neuralNetwork.setLearningRule(new BackPropagation());
+        if(READ_FROM_FILE){
+            try {
+                neuralNetwork = NeuralNetwork.load(new FileInputStream("per.nnet"));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }else {
+            neuralNetwork = new MultiLayerPerceptron(16, 150, 50, 3);
+            neuralNetwork.setLearningRule(new BackPropagation());
+        }
     }
 
     public static GameNetwork getInstance() {
@@ -67,5 +79,9 @@ public class GameNetwork {
             }
             return result;
         }
+    }
+
+    public void save(){
+        neuralNetwork.save("per.nnet");
     }
 }
