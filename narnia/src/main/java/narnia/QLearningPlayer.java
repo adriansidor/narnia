@@ -9,17 +9,17 @@ import org.neuroph.core.data.DataSetRow;
  */
 public class QLearningPlayer implements BallMoveDriver {
 
-    private final boolean RANDOM_MOVES = false;
+    private final boolean RANDOM_MOVES = true;
 
 
     private static final double GAMMA = 0.97;
-    private static final double BETA_T = 0.1;
+    private static final double BETA_T = 0.05;
 
     private MoveType curentMove;
 
     private MoveType lastMove = MoveType.DO_NOT_MOVE;
 
-    private int curentReward;
+    private double curentReward;
 
     private GameNetwork network = GameNetwork.getInstance();
 
@@ -43,8 +43,9 @@ public class QLearningPlayer implements BallMoveDriver {
 
         curentReward = Utils.getReward(new GameState(nextMove, positionVector));
 
-        updateNetworkFunction(new GameState(nextMove, positionVector), new GameState(ball.copy(), positionVector));
-
+//        if(RANDOM_MOVES) {
+            updateNetworkFunction(new GameState(nextMove, positionVector), new GameState(ball.copy(), positionVector));
+//        }
 
         ball.y = nextMove.y;
         Utils.checkMove(ball, box);
@@ -55,10 +56,13 @@ public class QLearningPlayer implements BallMoveDriver {
     private void updateNetworkFunction(GameState newGameState, GameState oldGameState) {
         double maxByNextStates = getMaxByStates(newGameState);
         maxByNextStates = GAMMA * maxByNextStates;
-        curentReward /= 11;
+        curentReward /= 2;
         double Qxtut = network.predictByInput(oldGameState, lastMove)[lastMove.getMove()];
 
-        double bracket = ((double)curentReward+(GAMMA*maxByNextStates)-Qxtut);
+        double bracket = (curentReward+(GAMMA*maxByNextStates)-Qxtut);
+        if(bracket<0){
+            int i;
+        }
         double updatedVal = Qxtut+(BETA_T*bracket);
 
 
@@ -70,6 +74,9 @@ public class QLearningPlayer implements BallMoveDriver {
 
         network.learn(toLearn);
 
+        double[] newOut = network.predictByInput(newGameState,curentMove);
+
+        System.out.println();
     }
 
     private DataSet getDataSet(double[] in, double[] out){
@@ -80,9 +87,22 @@ public class QLearningPlayer implements BallMoveDriver {
 
     private double getMaxByStates(GameState newGameState) {
 //        TODO add reward if colision  = 0
-        double a = network.predictByInput(newGameState, MoveType.UP)[MoveType.UP.getMove()];
-        double b = network.predictByInput(newGameState, MoveType.DO_NOT_MOVE)[MoveType.DO_NOT_MOVE.getMove()];
-        double c = network.predictByInput(newGameState, MoveType.DOWN)[MoveType.DOWN.getMove()];
+        double a, b ,c;
+        if(Utils.getReward(new GameState(Utils.moveBall(newGameState.getPlayer().copy(),MoveType.UP),newGameState.getBallPositions()))==-10){
+            a = 0;
+        }else {
+            a = network.predictByInput(newGameState, MoveType.UP)[MoveType.UP.getMove()];
+        }
+        if(Utils.getReward(new GameState(Utils.moveBall(newGameState.getPlayer().copy(),MoveType.DO_NOT_MOVE),newGameState.getBallPositions()))==-10){
+            b = 0;
+        }else {
+            b = network.predictByInput(newGameState, MoveType.DO_NOT_MOVE)[MoveType.DO_NOT_MOVE.getMove()];
+        }
+        if(Utils.getReward(new GameState(Utils.moveBall(newGameState.getPlayer().copy(),MoveType.DOWN),newGameState.getBallPositions()))==-10){
+            c = 0;
+        }else {
+            c = network.predictByInput(newGameState, MoveType.DOWN)[MoveType.DOWN.getMove()];
+        }
         return Math.max(Math.max(a, b), c);
     }
 }

@@ -10,7 +10,7 @@ import javax.swing.*;
  * The control logic and main display panel for game.
  */
 public class BallWorld extends JPanel {
-   private static final int UPDATE_RATE = 800;  // Frames per second (fps)
+   private static final int UPDATE_RATE = 860;  // Frames per second (fps)
    
    //private Ball ball;         // A single bouncing Ball's instance
    private int numberOfGames;
@@ -93,6 +93,7 @@ public class BallWorld extends JPanel {
                  reset();
         	 }
              GameNetwork.getInstance().save();
+             System.out.println("wartosci wyjsciowe sieci to "+GameNetwork.getInstance().getOut());
          }
       };
       gameThread.start();  // Invoke GaemThread.run()

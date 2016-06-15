@@ -17,10 +17,10 @@ import java.util.List;
 public class GameNetwork {
 
     public static final int INPUT_NEURON_NUMBER = 16;
-    public static final int OUTPUT_NEURON_NUMBER = 16;
+    public static final int OUTPUT_NEURON_NUMBER = 3;
     private static GameNetwork gameNetwork;
 
-    private static final boolean READ_FROM_FILE = true;
+    private static final boolean READ_FROM_FILE = false;
 
     private NeuralNetwork neuralNetwork;
 

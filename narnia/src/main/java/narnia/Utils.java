@@ -58,18 +58,18 @@ public class Utils {
 
         switch (moveType) {
             case UP:
-                ball.y += STEP_UNIT;
+                ball.y -= STEP_UNIT;
                 break;
             case DO_NOT_MOVE:
                 break;
             case DOWN:
-                ball.y -= STEP_UNIT;
+                ball.y += STEP_UNIT;
                 break;
         }
         return ball;
     }
 
-    public static int getReward(GameState gameState) {
+    public static double getReward(GameState gameState) {
         for (BallPosition ballPosition : gameState.getBallPositions()) {
             if (gameState.getPlayer().detectCollision(ballPosition)) {
                 return -10;
