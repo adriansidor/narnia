@@ -1,5 +1,6 @@
 package narnia;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.awt.*;
 import java.util.Formatter;
@@ -7,6 +8,7 @@ import java.util.Formatter;
  * The bouncing ball.
  */
 @Data
+@NoArgsConstructor
 public class Ball {
    float x, y;           // Ball's center x and y (package access)
    float speedX, speedY; // Ball's speed per step in x and y (package access)
@@ -131,4 +133,14 @@ public class Ball {
    // Re-use to build the formatted string for toString()
    private StringBuilder sb = new StringBuilder();
    private Formatter formatter = new Formatter(sb);
+
+    public Ball copy() {
+        Ball res = new Ball();
+        res.x= this.x;
+        res.y = this.y;
+        res.direction = this.direction;
+        res.speedY = this.speedY;
+        res.speedX = this.speedX;
+        return res;
+    }
 }
