@@ -24,18 +24,48 @@ public class QLearningPlayer implements BallMoveDriver {
         }else {
         }
 
-        GameState actual = new GameState(ball.copy(),positionVector,MoveType.DO_NOT_MOVE,box);
+        GameState actualState = new GameState(ball.copy(),positionVector,MoveType.DO_NOT_MOVE,box);
 
-        Ball nextMove = Utils.moveBall(ball.copy(),curentMove);
+        Ball nextBallPos = Utils.moveBall(ball.copy(),curentMove);
+        Utils.checkMove(nextBallPos,box);
 
-        GameState newState = new GameState(nextMove.copy(),positionVector,curentMove,box);
+        GameState newState = new GameState(nextBallPos.copy(),positionVector,curentMove,box);
 
-        this.curentReward = getReward(actual,newState);
+        this.curentReward = getReward(actualState,newState);
+
+        updateLearningFunction(actualState,newState);
 
         Utils.moveBall(ball,curentMove);
         Utils.checkMove(ball,box);
         lastMove = curentMove;
+
     }
+
+    private void updateLearningFunction(GameState actualState, GameState newState) {
+        double newMaxQ =  maxOfNextMovesByAllStates(newState);
+    }
+
+    private double maxOfNextMovesByAllStates(GameState newState) {
+        double maxUp = getMaxByMoveType(newState,MoveType.UP);
+        double maxDontMove = getMaxByMoveType(newState,MoveType.DO_NOT_MOVE);
+        double maxDown = getMaxByMoveType(newState,MoveType.DOWN);
+        return Math.max(Math.max(maxDontMove,maxDown),maxUp);
+    }
+
+    private double getMaxByMoveType(GameState newState, MoveType moveType) {
+       Ball ball = newState.getBall();
+        Utils.moveBall(ball,moveType);
+        if(isEndOfEpizot(ball,newState.getBallPositions())){
+            return 0;
+        }else {
+            double[] out = network.predict(Utils.getInputByState(
+                    new GameState(ball,newState.getBallPositions(),moveType,newState.containerBox)));
+            System.out.println();
+            return Math.max(Math.max(out[0],out[1]),out[2]);
+        }
+    }
+
+
 
     private double getReward(GameState actual,GameState newState) {
         Ball actualBall = actual.getBall().copy();
@@ -49,6 +79,15 @@ public class QLearningPlayer implements BallMoveDriver {
             }
         }
         return rewartResult;
+    }
+
+    private boolean isEndOfEpizot(Ball ball, BallPosition[] positions){
+        for (BallPosition ballPosition : positions) {
+            if (ball.detectCollision(ballPosition)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private double updateReward(Ball actualBall, Ball newBall, BallPosition ballPosition) {

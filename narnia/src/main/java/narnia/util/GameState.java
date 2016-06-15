@@ -20,4 +20,5 @@ public class GameState {
     private BallPosition[] ballPositions;
     private MoveType moveInState;
     ContainerBox containerBox;
+
 }
