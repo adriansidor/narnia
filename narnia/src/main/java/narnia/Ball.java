@@ -1,6 +1,7 @@
 package narnia;
 import java.awt.*;
 import java.util.Formatter;
+import java.util.Random;
 /**
  * The bouncing ball.
  */
@@ -22,11 +23,25 @@ public class Ball {
       this.x = x;
       this.y = y;
       // Convert (speed, angle) to (x, y), with y-axis inverted
-      this.speedX = (float)(speed * Math.cos(Math.toRadians(angleInDegree)));
-      this.speedY = (float)(-speed * (float)Math.sin(Math.toRadians(angleInDegree)));
+      //this.speedX = (float)(speed * Math.cos(Math.toRadians(angleInDegree)));
+      //this.speedY = (float)(-speed * (float)Math.sin(Math.toRadians(angleInDegree)));
+      this.speedX = -10f;
+      Random rand = new Random();
+	  int direction = rand.nextInt(2);
+		switch (direction) {
+		case 0:
+			angleInDegree = 1;
+			break;
+		case 1:
+			angleInDegree = -1;
+			break;
+		}
+      this.speedY = 3f*angleInDegree;
       this.radius = radius;
       this.color = color;
       this.driver = driver;
+      //this.speedX -=10;
+      //this.speedY +=2;
    }
    /** Constructor with the default color */
    public Ball(float x, float y, float radius, float speed, float angleInDegree, BallMoveDriver driver) {
