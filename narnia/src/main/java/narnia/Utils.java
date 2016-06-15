@@ -1,5 +1,8 @@
 package narnia;
 
+import narnia.util.DictanceVector;
+import narnia.util.GameNetwork;
+import narnia.util.GameState;
 import narnia.util.MoveType;
 
 import java.util.Random;
@@ -66,5 +69,39 @@ public class Utils {
                 break;
         }
         return ball;
+    }
+
+    public static double[] getInputByState(GameState gameState) {
+        double [] input= new double[GameNetwork.NUMBER_OF_INPUT_NEURON];
+//        TODO do this
+        Ball ball = gameState.getBall();
+        MoveType moveType = gameState.getMoveInState();
+        ContainerBox cb = gameState.getContainerBox();
+        switch (moveType) {
+            case UP:
+                input[0] = 1;
+                break;
+            case DO_NOT_MOVE:
+                input[1] = 1;
+                break;
+            case DOWN:
+                input[2] = 1;
+                break;
+        }
+
+        int i = 3;
+        for(BallPosition bp: gameState.getBallPositions()){
+            if(bp!=null){
+                DictanceVector dv = DictanceVector.getDictanceVector(ball,bp);
+                input[i++] = dv.getX();
+                input[i++] = dv.getY();
+                input[i++] = bp.getDirection();
+            }else {
+                input[i++] = cb.maxX;
+                input[i++] = cb.maxY;
+                input[i++] = 0;
+            }
+        }
+        return input;
     }
 }
