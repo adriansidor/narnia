@@ -11,7 +11,7 @@ import static sun.security.x509.X509CertImpl.SIG;
 public class QLearningPlayer implements BallMoveDriver {
 
 
-    private static final boolean RANDOM_MOVES = true;
+    private static final boolean RANDOM_MOVES = false;
     private static final double PENALTY = -10000;
     private static final double BETA_T = 0.1;
     private static final double SIGMA_ = 0.97;
@@ -28,7 +28,7 @@ public class QLearningPlayer implements BallMoveDriver {
         if (RANDOM_MOVES) {
             curentMove = Utils.getRandomMove();
         } else {
-
+            curentMove = Utils.moveByNetwork(new GameState(ball.copy(),positionVector,lastMove,box));
         }
 
         GameState actualState = new GameState(ball.copy(), positionVector, curentMove, box);

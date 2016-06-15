@@ -1,4 +1,5 @@
 package narnia;
+import narnia.util.GameNetwork;
 import narnia.util.QLearningPlayer;
 
 import java.awt.*;
@@ -12,7 +13,7 @@ import javax.swing.*;
  * The control logic and main display panel for game.
  */
 public class BallWorld extends JPanel {
-   private static final int UPDATE_RATE = 30;  // Frames per second (fps)
+   private static final int UPDATE_RATE = 100;  // Frames per second (fps)
    
    //private Ball ball;         // A single bouncing Ball's instance
    private int numberOfGames;
@@ -24,6 +25,8 @@ public class BallWorld extends JPanel {
    private DrawCanvas canvas; // Custom canvas for drawing the box/ball
    private int canvasWidth;
    private int canvasHeight;
+
+    private GameNetwork network = GameNetwork.getInstance();
   
    /**
     * Constructor to create the UI components and init the game objects.
@@ -94,6 +97,7 @@ public class BallWorld extends JPanel {
                   }
                  reset();
         	 }
+//             network.saveNetwork("localNet");
          }
       };
       gameThread.start();  // Invoke GaemThread.run()

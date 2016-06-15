@@ -14,6 +14,8 @@ public class Utils {
 
     public static final float STEP_UNIT = 10;
 
+
+
     public static MoveType getRandomMove() {
         Random random = new Random();
         int randInt = random.nextInt(3);
@@ -106,5 +108,18 @@ public class Utils {
             }
         }
         return input;
+    }
+
+    public static MoveType moveByNetwork(GameState gameState) {
+        double[] in = getInputByState(gameState);
+        GameNetwork network = GameNetwork.getInstance();
+        double[] out = network.predict(in);
+        MoveType moveType = MoveType.UP;
+        if(out[1]>out[0]){
+            moveType = MoveType.DO_NOT_MOVE;
+        }if(out[2]>out[1]){
+            moveType = MoveType.DOWN;
+        }
+        return moveType;
     }
 }

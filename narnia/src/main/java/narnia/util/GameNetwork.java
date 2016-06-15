@@ -32,13 +32,19 @@ public class GameNetwork {
     private BasicNetwork network;
     private TrainingContinuation tc = null;
 
+    private static final boolean readFromFile = true;
+
     private GameNetwork(){
-        network = new BasicNetwork();
-        network.addLayer(new BasicLayer(null, true, NUMBER_OF_INPUT_NEURON));
-        network.addLayer(new BasicLayer(new ActivationSigmoid(), true, 80));
-        network.addLayer(new BasicLayer(new ActivationLinear(), false, NUMBER_OF_OUTPUT_NEURON));
-        network.getStructure().finalizeStructure();
-        network.reset();
+        if(readFromFile){
+            loadNetwork("localNet");
+        }else {
+            network = new BasicNetwork();
+            network.addLayer(new BasicLayer(null, true, NUMBER_OF_INPUT_NEURON));
+            network.addLayer(new BasicLayer(new ActivationSigmoid(), true, 80));
+            network.addLayer(new BasicLayer(new ActivationLinear(), false, NUMBER_OF_OUTPUT_NEURON));
+            network.getStructure().finalizeStructure();
+            network.reset();
+        }
     }
 
     public static GameNetwork getInstance() {
