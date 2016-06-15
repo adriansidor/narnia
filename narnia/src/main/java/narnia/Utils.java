@@ -49,9 +49,12 @@ public class Utils {
         if (ball.y < ballMinY) {
             ball.speedY = -ball.speedY;
             ball.y = ballMinY;
+            ball.direction = 1;
+
         } else if (ball.y > ballMaxY) {
             ball.speedY = -ball.speedY;
             ball.y = ballMaxY;
+            ball.direction = 0;
         }
     }
 
