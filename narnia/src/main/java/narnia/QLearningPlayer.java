@@ -4,15 +4,12 @@ import narnia.utils.MoveType;
 import org.neuroph.core.data.DataSet;
 import org.neuroph.core.data.DataSetRow;
 
-/**
- * Created by Radosław on 14.06.2016.
- */
 public class QLearningPlayer implements BallMoveDriver {
 
-    private final boolean RANDOM_MOVES = true;
+    private final boolean RANDOM_MOVES = false;
 
 
-    private static final double GAMMA = 0.97;
+    private static final double GAMMA = 0.15;
     private static final double BETA_T = 0.05;
 
     private MoveType curentMove;
@@ -56,7 +53,7 @@ public class QLearningPlayer implements BallMoveDriver {
     private void updateNetworkFunction(GameState newGameState, GameState oldGameState) {
         double maxByNextStates = getMaxByStates(newGameState);
         maxByNextStates = GAMMA * maxByNextStates;
-        curentReward /= 2;
+        curentReward /= 11;
         double Qxtut = network.predictByInput(oldGameState, lastMove)[lastMove.getMove()];
 
         double bracket = (curentReward+(GAMMA*maxByNextStates)-Qxtut);
@@ -64,7 +61,6 @@ public class QLearningPlayer implements BallMoveDriver {
             int i;
         }
         double updatedVal = Qxtut+(BETA_T*bracket);
-
 
         oldOut[lastMove.getMove()] = updatedVal;
 
@@ -80,6 +76,7 @@ public class QLearningPlayer implements BallMoveDriver {
     }
 
     private DataSet getDataSet(double[] in, double[] out){
+
         DataSet dataSet = new DataSet(16);
         dataSet.addRow(new DataSetRow(in,out));
         return dataSet;
@@ -94,6 +91,7 @@ public class QLearningPlayer implements BallMoveDriver {
             a = network.predictByInput(newGameState, MoveType.UP)[MoveType.UP.getMove()];
         }
         if(Utils.getReward(new GameState(Utils.moveBall(newGameState.getPlayer().copy(),MoveType.DO_NOT_MOVE),newGameState.getBallPositions()))==-10){
+
             b = 0;
         }else {
             b = network.predictByInput(newGameState, MoveType.DO_NOT_MOVE)[MoveType.DO_NOT_MOVE.getMove()];

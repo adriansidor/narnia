@@ -20,7 +20,7 @@ public class GameNetwork {
     public static final int OUTPUT_NEURON_NUMBER = 3;
     private static GameNetwork gameNetwork;
 
-    private static final boolean READ_FROM_FILE = false;
+    private static final boolean READ_FROM_FILE = true;
 
     private NeuralNetwork neuralNetwork;
 
@@ -74,7 +74,7 @@ public class GameNetwork {
             MoveType result = MoveType.UP;
             if(out[1]>out[0]){
                 result = MoveType.DO_NOT_MOVE;
-            }else if(out[2]>out[1]){
+            } if(out[2]>out[1]){
                 result = MoveType.DOWN;
             }
             return result;
