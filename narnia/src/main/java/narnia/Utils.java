@@ -12,7 +12,7 @@ import java.util.Random;
  */
 public class Utils {
 
-    public static final float STEP_UNIT = 10;
+    public static final float STEP_UNIT = 20;
 
 
 
@@ -115,10 +115,17 @@ public class Utils {
         GameNetwork network = GameNetwork.getInstance();
         double[] out = network.predict(in);
         MoveType moveType = MoveType.UP;
-        if(out[1]>out[0]){
-            moveType = MoveType.DO_NOT_MOVE;
-        }if(out[2]>out[1]){
-            moveType = MoveType.DOWN;
+        double a,b,c;
+        a = out[0];
+        b = out[1];
+        c = out[2];
+        if(a>b&&a>c){
+            moveType =  MoveType.UP;
+        }
+        if(b>a&&b>c){
+            moveType =  MoveType.DO_NOT_MOVE;
+        }if (c>a&&c>b){
+            moveType=  MoveType.DOWN;
         }
         return moveType;
     }

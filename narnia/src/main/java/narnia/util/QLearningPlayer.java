@@ -12,8 +12,8 @@ public class QLearningPlayer implements BallMoveDriver {
 
 
     private static final boolean RANDOM_MOVES = false;
-    private static final double PENALTY = -10000;
-    private static final double BETA_T = 0.1;
+    private static final double PENALTY = -5000;
+    private static final double BETA_T = 0.34;
     private static final double SIGMA_ = 0.97;
 
     private GameNetwork network = GameNetwork.getInstance();

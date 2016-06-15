@@ -11,7 +11,7 @@ public class Main {
 		// Run UI in the Event Dispatcher Thread (EDT), instead of Main thread
 		JFrame frame = new JFrame("A World of Balls");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setContentPane(new BallWorld(940, 380, 302)); // BallWorld is a JPanel
+		frame.setContentPane(new BallWorld(940, 380, 700)); // BallWorld is a JPanel
 		frame.pack(); // Preferred size of BallWorld
 		frame.setVisible(true); // Show it
 	}
