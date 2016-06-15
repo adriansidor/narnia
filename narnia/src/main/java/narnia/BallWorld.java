@@ -1,4 +1,6 @@
 package narnia;
+import narnia.util.QLearningPlayer;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.LinkedList;
@@ -70,7 +72,7 @@ public class BallWorld extends JPanel {
 		int speed = 10;
 		int angleInDegree = rand.nextInt(360);
 		player = new Ball(radius - 100, radius, radius, speed, angleInDegree,
-				Color.RED, new PlayerRandomMoveDriver());
+				Color.RED, new QLearningPlayer());
 		balls = new LinkedList<Ball>();
 		collision = false;
 	}

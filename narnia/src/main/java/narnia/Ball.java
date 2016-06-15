@@ -1,9 +1,12 @@
 package narnia;
+import lombok.Data;
+
 import java.awt.*;
 import java.util.Formatter;
 /**
  * The bouncing ball.
  */
+@Data
 public class Ball {
    float x, y;           // Ball's center x and y (package access)
    float speedX, speedY; // Ball's speed per step in x and y (package access)
