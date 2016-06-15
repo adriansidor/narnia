@@ -14,8 +14,11 @@ public class Ball {
    private Color color;  // Ball's color
    private static final Color DEFAULT_COLOR = Color.BLUE;
    private BallMoveDriver driver;
-  
-   /**
+
+//    0 go up 1 go downe
+    public int direction = 0;
+
+    /**
     * Constructor: For user friendliness, user specifies velocity in speed and
     * moveAngle in usual Cartesian coordinates. Need to convert to speedX and
     * speedY in Java graphics coordinates for ease of operation.

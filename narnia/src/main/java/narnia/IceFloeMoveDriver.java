@@ -11,6 +11,7 @@ public class IceFloeMoveDriver implements BallMoveDriver{
 		// Calculate the ball's new position
 		ball.x += ball.speedX;
 		ball.y += ball.speedY;
+		System.out.println(ball.direction);
 		// Check if the ball moves over the bounds. If so, adjust the position
 		// and speed.
 		/*if (ball.x < ballMinX) {
@@ -24,9 +25,11 @@ public class IceFloeMoveDriver implements BallMoveDriver{
 		if (ball.y < ballMinY) {
 			ball.speedY = -ball.speedY;
 			ball.y = ballMinY;
+			ball.direction = 1;
 		} else if (ball.y > ballMaxY) {
 			ball.speedY = -ball.speedY;
 			ball.y = ballMaxY;
+			ball.direction = 0;
 		}
 	}
 
