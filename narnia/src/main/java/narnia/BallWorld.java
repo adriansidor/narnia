@@ -64,13 +64,6 @@ public class BallWorld extends JPanel {
 				box.set(0, 0, canvasWidth, canvasHeight);
 			}
 		});
-
-		// Start the ball bouncing
-		reset();
-		gameStart();
-	}
-
-	public void reset() {
 		Random rand = new Random();
 		int radius = 40;
 		int x = rand.nextInt(canvasWidth - radius * 2 - 20) + radius + 10;
@@ -79,11 +72,11 @@ public class BallWorld extends JPanel {
 		if(network_flag) {
 			if(algorithm == "qlearning1") {
 				player = new Ball(radius - 100, y, radius, 0, speedY,
-						Color.RED, new PlayerLearningMoveDriver());
+						Color.RED, new QLearningMoveDriver());
 			}
 			if(algorithm == "qlearning2") {
 				player = new Ball(radius - 100, y, radius, 0, speedY,
-						Color.RED, new PlayerLearningMoveDriver());
+						Color.RED, new QLearningMoveDriver());
 			}
 				
 		} else {
@@ -91,6 +84,13 @@ public class BallWorld extends JPanel {
 			player = new Ball(radius - 100, y, radius, 0, speedY,
 			Color.RED, new LoadNetworkMoveDriver());
 		}
+		// Start the ball bouncing
+		reset();
+		gameStart();
+	}
+
+	public void reset() {
+		
 		balls = new LinkedList<Ball>();
 		collision = false;
 	}

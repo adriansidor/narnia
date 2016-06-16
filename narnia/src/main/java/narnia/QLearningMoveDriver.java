@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class PlayerLearningMoveDriver implements BallMoveDriver {
+public class QLearningMoveDriver implements BallMoveDriver {
 	static double epsilon = 1;
 	static double epochs = 6000;
 	static double beta = 0.1;
@@ -93,16 +93,16 @@ public class PlayerLearningMoveDriver implements BallMoveDriver {
 		double newQMax = maxQ(newQ);
 		double update = 0;
 		if(collision) {
-			update = reward;
+			newQMax = 0.0;
 			if (epsilon > 0.1)
 		        epsilon -= (1/epochs);
 			epochs--;
 			System.out.println("Epoch " + epochs);
 			System.out.println("Epsilon " + epsilon);
 			System.out.println("Kolizja");
-		} else {
-			update = qval[action] + beta*(reward + gamma*newQMax-qval[action]);
-		}
+		} 
+		update = qval[action] + beta*(reward + gamma*newQMax-qval[action]);
+		
 		//train model
 		qval[action] = update;
 		double[][] newInput = new double[1][vector.length];

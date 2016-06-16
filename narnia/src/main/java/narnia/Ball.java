@@ -13,7 +13,7 @@ public class Ball {
 	float radius; // Ball's radius (package access)
 	private Color color; // Ball's color
 	private static final Color DEFAULT_COLOR = Color.BLUE;
-	private BallMoveDriver driver;
+	public BallMoveDriver driver;
 
 	/**
 	 * Constructor: For user friendliness, user specifies velocity in speed and
