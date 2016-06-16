@@ -100,34 +100,37 @@ public class QLearning2MoveDriver implements BallMoveDriver{
 			samples.removeFirst();
 			samples.addLast(sample);
 		}
-		for(int i = 0; i<t; i++) {
-			int a = rand.nextInt(40);
-			sample = samples.get(a);
-			vector = computeVector2(sample.oldPlayer, sample.oldState);
-			double[] old_qval = network.predict(vector);
-			vector = computeVector2(sample.newPlayer, sample.oldState);
-			double[] newQ = network.predict(vector);
-			double newQMax = maxQ(newQ);
-			double update = 0;
-			boolean collision2 = false;
-			for(BallPosition position : positionVector) {
-				if(position != null) {
-					if(ball.detectCollision(position)) {
-						collision2 = true;
+		if(!samples.isEmpty()) {
+			for(int i = 0; i<t; i++) {
+				int a = rand.nextInt(samples.size());
+				sample = samples.get(a);
+				vector = computeVector2(sample.oldPlayer, sample.oldState);
+				double[] old_qval = network.predict(vector);
+				vector = computeVector2(sample.newPlayer, sample.oldState);
+				double[] newQ = network.predict(vector);
+				double newQMax = maxQ(newQ);
+				double update = 0;
+				boolean collision2 = false;
+				for(BallPosition position : positionVector) {
+					if(position != null) {
+						if(ball.detectCollision(position)) {
+							collision2 = true;
+						}
 					}
 				}
+				if(collision2) {
+					newQMax = 0.0;
+				}
+				update = old_qval[sample.action] + beta*(sample.reward + gamma*newQMax-old_qval[sample.action]);
+				old_qval[action] = update;
+				double[][] newInput = new double[1][vector.length];
+				newInput[0] = vector;
+				double[][] newOutput = new double[1][qval.length];
+				newOutput[0] = old_qval;
+				network.train(newInput, newOutput);
 			}
-			if(collision2) {
-				newQMax = 0.0;
-			}
-			update = old_qval[sample.action] + beta*(sample.reward + gamma*newQMax-old_qval[sample.action]);
-			old_qval[action] = update;
-			double[][] newInput = new double[1][vector.length];
-			newInput[0] = vector;
-			double[][] newOutput = new double[1][qval.length];
-			newOutput[0] = old_qval;
-			network.train(newInput, newOutput);
 		}
+
 		
 		if(collision) {
 			if (epsilon > 0.1)

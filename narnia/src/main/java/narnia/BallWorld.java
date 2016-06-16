@@ -76,7 +76,7 @@ public class BallWorld extends JPanel {
 			}
 			if(algorithm == "qlearning2") {
 				player = new Ball(radius - 100, y, radius, 0, speedY,
-						Color.RED, new QLearningMoveDriver());
+						Color.RED, new QLearning2MoveDriver());
 			}
 				
 		} else {
