@@ -24,8 +24,8 @@ public class NeuralNetwork {
 	
 	private NeuralNetwork() {
 		network = new BasicNetwork();
-		network.addLayer(new BasicLayer(null, true, 24));
-		network.addLayer(new BasicLayer(new ActivationSigmoid(), true, 80));
+		network.addLayer(new BasicLayer(null, true, 6));
+		network.addLayer(new BasicLayer(new ActivationSigmoid(), true, 40));
 		network.addLayer(new BasicLayer(new ActivationLinear(), false, 3));
 		network.getStructure().finalizeStructure();
 		network.reset();

@@ -5,13 +5,15 @@ public class BallPosition {
 	private float x;
 	private float y;
 	private float radius;
-	private float speed;
+	private float speedY;
+	private float speedX;
 	
 	public BallPosition(Ball ball) {
 		this.x = ball.x;
 		this.y = ball.y;
 		this.radius = ball.radius;
-		this.speed = (float)Math.sqrt(Math.pow(ball.speedX, 2)+Math.pow(ball.speedY, 2));
+		this.speedY = ball.speedY;
+		this.speedX = ball.speedX;
 	}
 	
 	public float getX() {
@@ -26,12 +28,16 @@ public class BallPosition {
 		return radius;
 	}
 	
-	public float getSpeed() {
-		return speed;
+	public float getSpeedY() {
+		return speedX;
+	}
+	
+	public float getSpeedX() {
+		return speedY;
 	}
 	
 	public String toString() {
-		return (x + " " + y);
+		return (""+speedY);
 	}
 
 }

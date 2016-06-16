@@ -17,15 +17,15 @@ public class LoadNetworkMoveDriver implements BallMoveDriver{
 		//double epsilon = 1;
 		//double gamma = 0.8;
 		int action = 0;
-		double[] vector = computeVector(ball, positionVector);
+		double[] vector = computeVector2(ball, positionVector);
 		double[] qval =  network.predict(vector);
 			//choose best action from Q(s,a) values
 	    action = argmax(qval);
 		//make a move
 		switch(action) {
-		case 0: ball.y +=ball.speedY;
+		case 0: ball.y -=ball.speedY;
 				break;
-		case 2: ball.y -=ball.speedY;
+		case 2: ball.y +=ball.speedY;
 				break;
 		//case 1 is not moving so we dont change ball.y
 		}
@@ -75,6 +75,25 @@ public class LoadNetworkMoveDriver implements BallMoveDriver{
 			vector[i] = v;
 		}
 		
+		return vector;
+	}
+	
+	private double[] computeVector2(Ball player, BallPosition[] positionVector) {
+		int size = 6;
+		double[] vector = new double[size];
+		int i = 0;
+		for(BallPosition ball : positionVector) {
+			if(ball == null) {
+			} else {
+				vector[i] = (double)(player.x-ball.getX());
+				i++;
+				vector[i] = (double)(player.y-ball.getY());
+				i++;
+			}
+		}
+		for(int a = i; a<size; a++) {
+			vector[a] = -10.0;
+		}
 		return vector;
 	}
 

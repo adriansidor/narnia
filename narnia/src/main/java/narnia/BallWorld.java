@@ -12,9 +12,11 @@ import javax.swing.*;
  * The control logic and main display panel for game.
  */
 public class BallWorld extends JPanel {
-	private static final int UPDATE_RATE = 30; // Frames per second (fps)
+	private static int UPDATE_RATE = 30000; // Frames per second (fps)
 
+	boolean network_flag = false;
 	// private Ball ball; // A single bouncing Ball's instance
+	private String algorithm;
 	private int numberOfGames;
 	private int n = 12;
 	private LinkedList<Ball> balls = new LinkedList<Ball>();
@@ -34,12 +36,13 @@ public class BallWorld extends JPanel {
 	 * @param height
 	 *            : screen height
 	 */
-	public BallWorld(int width, int height, int numberOfGames) {
+	public BallWorld(int width, int height, int numberOfGames, String algorithm, boolean save) {
 
 		canvasWidth = width;
 		canvasHeight = height;
 		this.numberOfGames = numberOfGames;
-
+		this.network_flag = save;
+		this.algorithm = algorithm;
 		// Init the Container Box to fill the screen
 		box = new ContainerBox(0, 0, canvasWidth, canvasHeight, Color.BLACK,
 				Color.WHITE);
@@ -72,12 +75,22 @@ public class BallWorld extends JPanel {
 		int radius = 40;
 		int x = rand.nextInt(canvasWidth - radius * 2 - 20) + radius + 10;
 		int y = rand.nextInt(canvasHeight - radius * 2 - 20) + radius + 10;
-		int speed = 10;
-		int angleInDegree = rand.nextInt(360);
-		/*player = new Ball(radius - 100, y, radius, speed, angleInDegree,
-				Color.RED, new PlayerLearningMoveDriver());*/
-		player = new Ball(radius - 100, y, radius, speed, angleInDegree,
-				Color.RED, new LoadNetworkMoveDriver());
+		int speedY = 10;
+		if(network_flag) {
+			if(algorithm == "qlearning1") {
+				player = new Ball(radius - 100, y, radius, 0, speedY,
+						Color.RED, new PlayerLearningMoveDriver());
+			}
+			if(algorithm == "qlearning2") {
+				player = new Ball(radius - 100, y, radius, 0, speedY,
+						Color.RED, new PlayerLearningMoveDriver());
+			}
+				
+		} else {
+			UPDATE_RATE=30;
+			player = new Ball(radius - 100, y, radius, 0, speedY,
+			Color.RED, new LoadNetworkMoveDriver());
+		}
 		balls = new LinkedList<Ball>();
 		collision = false;
 	}
@@ -100,7 +113,11 @@ public class BallWorld extends JPanel {
                   }
                  reset();
         	 }
-        	 //NeuralNetwork.getInstance().saveNetwork("network_save");
+        	 if(network_flag) {
+        		 NeuralNetwork.getInstance().saveNetwork("network_save");
+        		 System.out.println("Zapisalem siec");
+        	 }
+        	 
          }
       };
       gameThread.start();  // Invoke GaemThread.run()
@@ -133,25 +150,21 @@ public class BallWorld extends JPanel {
 		}
 	}
 
-	private Ball generateBall(int radius, int speed) {
+	private Ball generateBall(int radius, float speedX, float speedY) {
 		Random rand = new Random();
 		int y = rand.nextInt(canvasHeight - radius * 2 - 20) + radius + 10;
 		int direction = rand.nextInt(2);
-		int angleInDegree = 0;
 		switch (direction) {
 		case 0:
-			angleInDegree = 100;
-			break;
-		case 1:
-			angleInDegree = 100;
+			speedY = -1*speedY;
 			break;
 		}
-		Ball ball = new Ball((box.maxX + radius), y, radius, speed,
-				angleInDegree, Color.BLUE, new IceFloeMoveDriver());
+		Ball ball = new Ball((box.maxX + radius), y, radius, speedX,
+				speedY, Color.BLUE, new IceFloeMoveDriver());
 		return (ball);
 	}
 
-	private void addBall(LinkedList<Ball> balls, int n, int radius, int speed) {
+	private void addBall(LinkedList<Ball> balls, int n, int radius, float speedX, float speedY) {
 		if (balls.size() < n) {
 			try {
 				Ball lastBall = balls.getLast();
@@ -159,11 +172,11 @@ public class BallWorld extends JPanel {
 				//System.out.println(distance);
 				float edge = lastBall.x - lastBall.radius;
 				if (edge <= (box.maxX - 4 * distance)) {
-					balls.add(generateBall(radius, speed));
+					balls.add(generateBall(radius, speedX, speedY));
 				}
 
 			} catch (NoSuchElementException e) {
-				balls.add(generateBall(radius, speed));
+				balls.add(generateBall(radius, speedX, speedY));
 			}
 
 		}
@@ -190,21 +203,14 @@ public class BallWorld extends JPanel {
 	 * detection and response.
 	 */
 	public void gameUpdate() {
-		addBall(balls, n, 40, 10);
-		//System.out.println(balls.size());
+		addBall(balls, n, 40, -10.0f, 3.0f);
 		moveBalls(balls);
 		BallPosition[] positionVector = positionVector(balls, n);
-		//System.out.println("Ball position");
-		/*
-		 * for(BallPosition position : positionVector) {
-		 * System.out.println(position); }
-		 */
 		player.moveOneStepWithCollisionDetection(box, positionVector);
 		if (detectCollision(player, balls)) {
 			collision = true;
 		}
 		removeBall(balls);
-		// simpleTrain();
 	}
 
 	public void simpleTrain() {

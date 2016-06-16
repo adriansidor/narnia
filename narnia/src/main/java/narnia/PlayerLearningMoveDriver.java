@@ -6,20 +6,23 @@ import java.util.Random;
 
 public class PlayerLearningMoveDriver implements BallMoveDriver {
 	static double epsilon = 1;
-	static double epochs = 1000;
+	static double epochs = 6000;
+	static double beta = 0.1;
 	double gamma = 0.8;
 
 	public void move(Ball ball, ContainerBox box, BallPosition[] positionVector) {
-		float ballMinX = box.minX + ball.radius;
-		float ballMinY = box.minY + ball.radius;
-		float ballMaxX = box.maxX - ball.radius;
-		float ballMaxY = box.maxY - ball.radius;
 		
-		//double epsilon = 1;
-		//double gamma = 0.8;
 		int action = 0;
 		NeuralNetwork network = NeuralNetwork.getInstance();
-		double[] vector = computeVector(ball, positionVector);
+		BallPosition pos = null;
+		for(BallPosition ball2 : positionVector) {
+			if(ball2 != null) {
+				pos = ball2;
+				break;
+			}
+		}
+		//double[] vector = computeVector(ball, positionVector);
+		double[] vector = computeVector2(ball, positionVector);
 		double[] qval =  network.predict(vector);
 		Random rand = new Random();
 		double random = rand.nextDouble();
@@ -31,40 +34,61 @@ public class PlayerLearningMoveDriver implements BallMoveDriver {
 			action = argmax(qval);
 		}
 		//make a move
-		switch(action) {
-		case 0: ball.y +=ball.speedY;
-				break;
-		case 2: ball.y -=ball.speedY;
-				break;
-		//case 1 is not moving so we dont change ball.y
-		}
-		if (ball.x < ballMinX) {
-			ball.speedX = -ball.speedX; // Reflect along normal
-			ball.x = ballMinX; // Re-position the ball at the edge
-		} else if (ball.x > ballMaxX) {
-			ball.speedX = -ball.speedX;
-			ball.x = ballMaxX;
-		}
-		if (ball.y < ballMinY) {
-			//ball.speedY = -ball.speedY;
-			ball.y = ballMinY;
-		} else if (ball.y > ballMaxY) {
-			//ball.speedY = -ball.speedY;
-			ball.y = ballMaxY;
-		}	
+		ball.moveBaseOnAction(action, box);
 		//Reward
-		double reward = 1.0;
+		double reward = 0.0;
+		boolean topHalf = true;
+		if(ball.y > (box.maxY/2)) {
+			topHalf = false;
+		}
+		if(pos != null) {
+			if(pos.getSpeedY() < 0) {
+				if(!topHalf) {
+					if(action == 0)
+						reward = 5.0;
+					if(action == 1)
+						reward = -1.0;
+					if(action == 2)
+						reward = -1.0;
+				} else {
+					if(action == 0)
+						reward = -1.0;
+					if(action == 1)
+						reward = -1.0;
+					if(action == 2)
+						reward = 5.0;
+				}
+			} else {
+				if(topHalf) {
+					if(action == 0)
+						reward = -1.0;
+					if(action == 1)
+						reward = -1.0;
+					if(action == 2)
+						reward = 5.0;
+				} else {
+					if(action == 0)
+						reward = 5.0;
+					if(action == 1)
+						reward = -1.0;
+					if(action == 2)
+						reward = -1.0;
+				}
+
+			}
+		}
+
 		boolean collision = false;
 		for(BallPosition position : positionVector) {
 			if(position != null) {
 				if(ball.detectCollision(position)) {
-					reward = -100.0;
+					reward = -1000.0;
 					collision = true;
 				}
 			}
 		}
 		//get maxQ from next state
-		vector = computeVector(ball, positionVector);
+		vector = computeVector2(ball, positionVector);
 		double[] newQ = network.predict(vector);
 		double newQMax = maxQ(newQ);
 		double update = 0;
@@ -77,7 +101,7 @@ public class PlayerLearningMoveDriver implements BallMoveDriver {
 			System.out.println("Epsilon " + epsilon);
 			System.out.println("Kolizja");
 		} else {
-			update = reward + gamma*newQMax;
+			update = qval[action] + beta*(reward + gamma*newQMax-qval[action]);
 		}
 		//train model
 		qval[action] = update;
@@ -129,6 +153,24 @@ public class PlayerLearningMoveDriver implements BallMoveDriver {
 			vector[i] = v;
 		}
 		
+		return vector;
+	}
+	private double[] computeVector2(Ball player, BallPosition[] positionVector) {
+		int size = 6;
+		double[] vector = new double[size];
+		int i = 0;
+		for(BallPosition ball : positionVector) {
+			if(ball == null) {
+			} else {
+				vector[i] = (double)(player.x-ball.getX());
+				i++;
+				vector[i] = (double)(player.y-ball.getY());
+				i++;
+			}
+		}
+		for(int a = i; a<size; a++) {
+			vector[a] = -10.0;
+		}
 		return vector;
 	}
 
